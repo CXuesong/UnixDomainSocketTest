@@ -48,33 +48,33 @@ namespace UnixDomainSocketTest
                 listener.Bind(endpoint);
                 listener.Listen(5);
                 Console.WriteLine("Server: Listening at {0}.", endpoint);
-                var handler = await listener.AcceptAsync();
-                Console.WriteLine("Server: Connected at {0}.", handler.RemoteEndPoint);
-                Console.WriteLine("Server: Type something and press Enter. Empty line for exit.");
-                using (var ns = new NetworkStream(handler))
-                using (var writer = new StreamWriter(ns))
+                using (var handler = await listener.AcceptAsync())
                 {
-                    var v = ns.ReadByte();
-                    Console.WriteLine("Server: Received prologue: {0}.", v);
-                    while (true)
+                    Console.WriteLine("Server: Connected at {0}.", handler.RemoteEndPoint);
+                    Console.WriteLine("Server: Type something and press Enter. Empty line for exit.");
+                    using (var ns = new NetworkStream(handler))
+                    using (var writer = new StreamWriter(ns))
                     {
-                        Console.Write("SERVER >");
-                        var line = Console.ReadLine();
-                        await writer.WriteLineAsync(line);
-                        await writer.FlushAsync();
-                        Console.WriteLine("Server: Sent {0} characters.", line.Length);
-                        v = ns.ReadByte();
-                        if (v != ACKOWLEDGE)
+                        var v = ns.ReadByte();
+                        Console.WriteLine("Server: Received prologue: {0}.", v);
+                        while (true)
                         {
-                            Console.WriteLine("Server: Client failed to acknowledge the message.");
+                            Console.Write("SERVER >");
+                            var line = Console.ReadLine();
+                            await writer.WriteLineAsync(line);
+                            await writer.FlushAsync();
+                            Console.WriteLine("Server: Sent {0} characters.", line.Length);
+                            v = ns.ReadByte();
+                            if (v != ACKOWLEDGE)
+                            {
+                                Console.WriteLine("Server: Client failed to acknowledge the message.");
+                            }
+                            if (line == "") break;
                         }
-                        if (line == "") break;
                     }
+                    Console.WriteLine("Server: Shutting down…");
+                    handler.Shutdown(SocketShutdown.Both);
                 }
-
-                Console.WriteLine("Server: Shutting down…");
-                listener.Shutdown(SocketShutdown.Both);
-                listener.Close();
             }
         }
 
@@ -94,9 +94,9 @@ namespace UnixDomainSocketTest
                     while (true)
                     {
                         var line = await reader.ReadLineAsync();
-                        if (line == "") break;
                         Console.WriteLine("CLIENT >{0}", line);
                         ns.WriteByte(ACKOWLEDGE);
+                        if (line == "") break;
                     }
                 }
 
