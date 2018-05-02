@@ -5,3 +5,5 @@ This repos contains some test code for the newly-introduced [`UnixDomainSocketEn
 You can either execute the application to run the server, client, or both in the same console.
 
 ![Screenshot](Screenshot.PNG)
+
+See the comments in the source code above the `Main` method for the instruction on command line arguments.
