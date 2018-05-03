@@ -6,4 +6,4 @@ You can either execute the application to run the server, client, or both in the
 
 ![Screenshot](Screenshot.PNG)
 
-See the comments in the source code above the `Main` method for the instruction on command line arguments.
+See the comments in the source code above the `Main` method for the instruction on command line arguments. You may need VS 2017 15.7.0 Preview 1 or higher version to properly build the project.
